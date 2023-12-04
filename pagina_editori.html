@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrations</title>
+    <link rel="stylesheet" href="css.css">
+</head>
+<body>
+    <h1>Registration List</h1>
+
+    <div class="registration" id="registration1">
+        <h2>Title: Article Title 1</h2>
+        <p>Author: John Doe</p>
+        <p>Date: January 1, 2023</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <button onclick="approveRegistration(1)">Approve</button>
+        <button onclick="denyRegistration(1)">Deny</button>
+    </div>
+
+    <div class="registration" id="registration2">
+        <h2>Title: Article Title 2</h2>
+        <p>Author: Jane Smith</p>
+        <p>Date: February 15, 2023</p>
+        <p>Nulla facilisi. Ut fringilla.</p>
+        <button onclick="approveRegistration(2)">Approve</button>
+        <button onclick="denyRegistration(2)">Deny</button>
+    </div>
+
+    <!-- Add more registration entries as needed -->
+
+    <script>
+        function approveRegistration(registrationId) {
+            // Logic to approve registration with ID: registrationId
+            console.log('Registration ' + registrationId + ' approved.');
+            // Hide buttons for the approved registration
+            var approvedRegistration = document.getElementById('registration' + registrationId);
+            if (approvedRegistration) {
+                var buttons = approvedRegistration.getElementsByTagName('button');
+                for (var i = 0; i < buttons.length; i++) {
+                    buttons[i].style.display = 'none';
+                }
+            }
+            // Additional actions or backend calls can be placed here
+        }
+
+        function denyRegistration(registrationId) {
+            // Logic to deny registration with ID: registrationId
+            console.log('Registration ' + registrationId + ' denied.');
+            // Remove the denied registration from the page
+            var deniedRegistration = document.getElementById('registration' + registrationId);
+            if (deniedRegistration) {
+                deniedRegistration.remove();
+            }
+            // Additional actions or backend calls can be placed here
+        }
+    </script>
+</body>
+</html>
