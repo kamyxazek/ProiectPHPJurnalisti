@@ -1,36 +1,72 @@
-<?php
-session_start();
-if (!isset($_SESSION["user"])) {
-   header("Location: login.php");
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
-    <title>User Dashboard</title>
+    <title>Articole aprobate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .article {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .article h2 {
+            color: #333;
+        }
+
+        .article p {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Bine ati venit la noi pe site!</h1>
-        <div class="registration" id="registration1">
-        <h2>Title: Article Title 1</h2>
-        <p>Author: John Doe</p>
-        <p>Date: January 1, 2023</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-    </div>
+    <h1>Approved Articles</h1>
 
-    <div class="registration" id="registration2">
-        <h2>Title: Article Title 2</h2>
-        <p>Author: Jane Smith</p>
-        <p>Date: February 15, 2023</p>
-        <p>Nulla facilisi. Ut fringilla.</p>
-    </div>
-        <a href="logout.php" class="btn btn-warning">Logout</a>
-    </div>
+    <?php
+    // Fetch and display approved articles
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "articole";
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    $sql = "SELECT * FROM articole WHERE approved = 1"; // Assuming there is a column 'approved'
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            // Display approved article details
+            echo '<div class="article">';
+            echo '<h2>' . $row['titlu'] . '</h2>';
+            echo '<p>Author: ' . $row['autor'] . '</p>';
+            echo '<p>Date: ' . $row['data'] . '</p>';
+            echo '<p>' . $row['content'] . '</p>';
+            echo '</div>';
+        }
+    } else {
+        echo "No approved articles to display";
+    }
+
+    $conn->close();
+    ?>
 </body>
 </html>

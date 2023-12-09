@@ -1,7 +1,54 @@
 <?php
 session_start();
+
 if (isset($_SESSION["user"])) {
-   header("Location: index.php");
+    // Redirect logged-in users to their respective pages
+    $domain = explode('@', $_SESSION['user'])[1];
+    switch ($domain) {
+        case 'cititor.ro':
+            header("Location: pagina_cititori.php");
+            exit();
+            break;
+        case 'jurnalist.ro':
+            header("Location: adauga_articol.php");
+            exit();
+            break;
+        case 'editor.ro':
+            header("Location: pagina_editori.php");
+            exit();
+            break;
+        default:
+            // Redirect to a default page if the domain is not recognized
+            header("Location: default_page.php");
+            exit();
+            break;
+    }
+}
+
+if (isset($_POST["login"])) {
+    require_once "database.php";
+
+    $email = $_POST["email"];
+    $password = $_POST["password"];
+
+    $sql = "SELECT * FROM users WHERE email = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
+
+    if ($user) {
+        if (password_verify($password, $user["password"])) {
+            $_SESSION["user"] = $email; // Store the user's email in the session
+            header("Location: ".$_SERVER['PHP_SELF']); // Redirect to self to process the redirect
+            exit();
+        } else {
+            echo "<div class='alert alert-danger'>Password does not match</div>";
+        }
+    } else {
+        echo "<div class='alert alert-danger'>User not found</div>";
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -28,7 +75,7 @@ if (isset($_SESSION["user"])) {
                 if (password_verify($password, $user["password"])) {
                     session_start();
                     $_SESSION["user"] = "yes";
-                    header("Location: index.php");
+                    header("Location: adauga_articol.php");
                     die();
                 }else{
                     echo "<div class='alert alert-danger'>Password does not match</div>";

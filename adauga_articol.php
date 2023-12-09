@@ -6,53 +6,64 @@
     <link rel="stylesheet" href="css2.css"> 
 </head>
 <body>
-    <h1>Add Article</h1>
+    <h1>Adauga Articol</h1>
 
-    <form action="process_article.php" method="post">
-        <label for="title">Title:</label><br>
-        <input type="text" id="title" name="title" required><br><br>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+        <label for="titlu">Titlu:</label><br>
+        <input type="text" id="titlu" name="titlu" required><br><br>
 
-        <label for="author">Author:</label><br>
-        <input type="text" id="author" name="author" required><br><br>
+        <label for="autor">Autor:</label><br>
+        <input type="text" id="autor" name="autor" required><br><br>
 
         <label for="content">Content:</label><br>
         <textarea id="content" name="content" rows="4" required></textarea><br><br>
 
-        <label for="date">Date:</label><br>
-        <input type="date" id="date" name="date" required><br><br>
+        <label for="data">data:</label><br>
+        <input type="date" id="data" name="data" required><br><br>
 
         <input type="submit" value="Submit">
     </form>
+    </div>
+        <a href="logout.php" class="btn btn-warning">Logout</a>
+    </div>
+
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Database connection details
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "articole"; // Change this to your database name
+
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Escape user inputs for security
+        $title = mysqli_real_escape_string($conn, $_POST['titlu']);
+        $author = mysqli_real_escape_string($conn, $_POST['autor']);
+        $content = mysqli_real_escape_string($conn, $_POST['content']);
+        $date = mysqli_real_escape_string($conn, $_POST['data']);
+
+        // SQL query to insert data into the table
+        $sql = "INSERT INTO articole (titlu, autor, content, data) VALUES ('$title', '$author', '$content', '$date')";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "New record added successfully";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+
+        // Close the connection
+        $conn->close();
+
+        // Refresh the page
+        header("Refresh:0");
+    }
+    ?>
 </body>
 </html>
-<?php
-// Establish database connection
-$servername = "localhost";
-$username = "your_username";
-$password = "your_password";
-$dbname = "your_database";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Fetch article details from the form
-$title = $_POST['title'];
-$author = $_POST['author'];
-$content = $_POST['content'];
-$date = $_POST['date'];
-
-// Prepare SQL statement to insert article into the database
-$sql = "INSERT INTO articles (title, author, content, date) VALUES ('$title', '$author', '$content', '$date')";
-
-if ($conn->query($sql) === TRUE) {
-    echo "New article added successfully!";
-} else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
-}
-
-$conn->close();
-?>
